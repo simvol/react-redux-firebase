@@ -1,19 +1,36 @@
-import { ADD_TODO, REMOVE_TODO, TOGGLE_TODO } from './types';
+import { FETCH_TODOS, REMOVE_TODO, TOGGLE_TODO } from './types';
+import { todosRef } from '../config/firebase';
 
-let nextTodoId = 0;
+export const fetchTodos = () => async dispatch => {
+  todosRef.onSnapshot(todosSnapshot => {
 
-export const addTodo = task => ({
-  type: ADD_TODO,
-  id: ++nextTodoId,
-  task
-});
+    const todos = todosSnapshot.docs.map(todoSnapshot => ({
+        ...todoSnapshot.data(),
+        id: todoSnapshot.id
+      })
+    );
 
-export const toggleTodo = id => ({
-  type: TOGGLE_TODO,
-  id
-});
+    dispatch({
+      type: FETCH_TODOS,
+      payload: todos
+    })
+  })
+};
 
-export const removeTodo = id => ({
-  type: REMOVE_TODO,
-  id
-});
+export const addTodo = task => async dispatch => {
+  todosRef.add({
+    task,
+    completed: false
+  });
+};
+
+export const toggleTodo = todo => async dispatch => {
+  todosRef.doc(todo.id).set({
+    ...todo,
+    completed: !todo.completed
+  });
+};
+
+export const removeTodo = id => async dispatch => {
+  todosRef.doc(id).delete();
+};

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux';
-import {toggleTodo, removeTodo} from '../actions/todoActions';
+import {fetchTodos, toggleTodo, removeTodo} from '../actions/todoActions';
 
 class TodoList extends Component {
   state = {
@@ -17,8 +17,12 @@ class TodoList extends Component {
     return null;
   }
 
-  onComplete = id => {
-    this.props.toggleTodo(id);
+  componentDidMount() {
+    this.props.fetchTodos();
+  }
+
+  onComplete = todo => {
+    this.props.toggleTodo(todo);
   }
 
   onDelete = id => {
@@ -30,13 +34,15 @@ class TodoList extends Component {
     if (todos){
       return (
         <ul>
-          {todos.map(todo => (
-              <li key={todo.id}> 
-                {todo.task} 
-                <button onClick={this.onComplete.bind(this, todo.id)}>complete</button>
-                <button onClick={this.onDelete.bind(this, todo.id)}>delete</button>
-              </li>
-            )
+          {todos.map(todo => {
+              const todoStyle = todo.completed === true ? {textDecoration: 'line-through'} : {};
+
+              return (<li key={todo.id}> 
+                        <span style={todoStyle}>{todo.task}</span>
+                        <button onClick={this.onComplete.bind(this, todo)}>complete</button>
+                        <button onClick={this.onDelete.bind(this, todo.id)}>delete</button>
+                      </li>);
+            }
           )}
         </ul>
       );
@@ -53,6 +59,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
+  fetchTodos: () => dispatch(fetchTodos()),
   toggleTodo: id => dispatch(toggleTodo(id)),
   removeTodo: id => dispatch(removeTodo(id))
 });

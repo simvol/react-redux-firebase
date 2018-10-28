@@ -1,13 +1,16 @@
-import { ADD_TODO, REMOVE_TODO, TOGGLE_TODO } from '../actions/types';
+import { ADD_TODO, REMOVE_TODO, TOGGLE_TODO, FETCH_TODOS } from '../actions/types';
 
 const initialState = {
-  todos: [
-    {task: 'lololol', id: 0, completed: false}
-  ]
+  todos: []
 };
 
 const todos = (state = initialState, action) => {
   switch (action.type) {
+    case FETCH_TODOS:
+      return {
+        todos: action.payload
+      };
+
     case ADD_TODO:
       return {
         todos: [
