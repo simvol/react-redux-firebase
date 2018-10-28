@@ -1,4 +1,4 @@
-import { FETCH_TODOS, REMOVE_TODO, TOGGLE_TODO } from './types';
+import { FETCH_TODOS } from './types';
 import { todosRef } from '../config/firebase';
 
 export const fetchTodos = () => async dispatch => {
